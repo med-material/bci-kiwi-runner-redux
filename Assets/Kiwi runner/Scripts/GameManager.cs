@@ -527,7 +527,6 @@ public class GameManager : MonoBehaviour
         if (gameState == GameState.Intro)
         {
             gameState = GameState.Running;
-            Debug.Log("gamestate: " + gameState);
         }
         else
         {
@@ -646,7 +645,8 @@ public class GameManager : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        EndGame();
+        if(gameState == GameState.Running)
+            EndGame();
     }
 
 }

@@ -151,7 +151,8 @@ public class OpenBCIInput : MonoBehaviour
        if (confidence > classificationThreshold) {
            newClassification = MotorImageryEvent.MotorImagery;
            inputData.validity = InputValidity.Accepted;
-       }
+            Debug.Log("Motor imagery detected!");
+        }
        if (newClassification != classification) {
            inputNumber++;
            inputData.inputNumber = inputNumber;

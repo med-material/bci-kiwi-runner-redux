@@ -7,6 +7,8 @@ public class ObstacleBehavior : MonoBehaviour
     Transform trampoline;
     Transform cue;
     Transform obstacle;
+    public GameObject air3;
+    public GameObject air4;
 
     // Start is called before the first frame update
     void Start()
@@ -14,9 +16,13 @@ public class ObstacleBehavior : MonoBehaviour
         trampoline = GetComponentInChildren<Transform>().Find("Trampoline");
         cue = GetComponentInChildren<Transform>().Find("Cue");
         obstacle = GetComponentInChildren<Transform>().Find("SlowZone");
+        
 
-        if(name != "Babies")
+        if (name != "Babies")
+        {
+            air4.SetActive(false);
             Resize();
+        }
 
         StartCoroutine(Move());
     }
@@ -55,20 +61,34 @@ public class ObstacleBehavior : MonoBehaviour
         float newTrampolineWidth = ((GameController.groundSize / GameController.speed)
             / trampolineColliderSize) * GameController.inputWindow;
 
-        trampoline.transform.localScale = new Vector3(newTrampolineWidth, trampoline.transform.localScale.y);
+        trampoline.localScale = new Vector3(newTrampolineWidth, trampoline.localScale.y);
+
+        if(newTrampolineWidth > 1.4f)
+        {
+            air4.SetActive(true);
+        }
+        else if(newTrampolineWidth < 0.8f)
+        {
+            air3.SetActive(false);
+        }
 
         // Moving the trampoline object after resizing
         float obstacleWidth = obstacle.GetComponent<Renderer>().bounds.size.x;
         float trampolineWidth = trampoline.GetComponent<Renderer>().bounds.size.x;
-        float newTaskPos = obstacle.transform.localPosition.x - obstacleWidth / 2 - trampolineWidth / 2;
+        float newTaskPos = obstacle.localPosition.x - obstacleWidth / 2 - trampolineWidth / 2;
 
-        trampoline.transform.localPosition = new Vector2(newTaskPos, trampoline.transform.localPosition.y);
+        trampoline.localPosition = new Vector2(newTaskPos, trampoline.transform.localPosition.y);
 
-        //Moving the cue/signpost after resizing task, according to prep phase length
-        float newCuePos = trampoline.transform.localPosition.x - trampolineColliderSize / 2 - 
+
+        // Moving the cue/signpost after resizing task, according to prep phase length
+        float actualColliderSize = trampolineColliderSize / 10.22f * trampolineWidth;
+        float newCuePos = newTaskPos - actualColliderSize / 2 - 
             (GameController.groundSize / GameController.speed) * GameController.prepPhase;
 
-        cue.transform.localPosition = new Vector2(newCuePos, cue.transform.localPosition.y);
+        cue.localPosition = new Vector2(newCuePos, cue.transform.localPosition.y);
+
+        // Move entire obstacle object so it (seemingly) spawns just off screen
+        transform.position = new Vector2(10 + Mathf.Abs(cue.localPosition.x), -1);
     }
 
     private void OnTriggerExit2D(Collider2D other)

@@ -158,14 +158,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab27ba71bd6f5fa43bf6d4ad3d916c71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  setupType: 3
+  setupType: 0
   noInputReceivedFabAlarm: 0.5
   fabAlarmVariability: 0.5
   startPolicyReview: 0.2
-  trials: 5
-  gamePolicy: 1
+  trials: 2
+  gamePolicy: 2
   interTrialIntervalSeconds: 4.5
-  inputWindowSeconds: 2
+  inputWindowSeconds: 4
   prepPhaseSeconds: 2
   onGameStateChanged:
     m_PersistentCalls:
@@ -226,11 +226,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 322083990}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.43973017, y: 15.553736, z: 5.393628}
+  m_LocalPosition: {x: -2.3655014, y: 13.14576, z: -7.2405176}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 913943457}
-  m_RootOrder: 0
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &346789349 stripped
 GameObject:
@@ -483,11 +483,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 458582875}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.43973017, y: 15.553736, z: 5.393628}
+  m_LocalPosition: {x: -2.3655014, y: 13.14576, z: -7.2405176}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 913943457}
-  m_RootOrder: 2
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &458582877
 MonoBehaviour:
@@ -623,39 +623,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3e5cff16abeee540b0c6c1c3d5c9d21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &913943456
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 913943457}
-  m_Layer: 0
-  m_Name: BlinkDetector
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &913943457
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 913943456}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.8052316, y: -2.4079762, z: -12.634146}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 322083993}
-  - {fileID: 1377681131}
-  - {fileID: 458582876}
-  m_Father: {fileID: 0}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1006927844
 GameObject:
   m_ObjectHideFlags: 0
@@ -690,7 +657,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameManager: {fileID: 322083991}
-  baseSpeed: 10
+  baseSpeed: 13
   prep: {fileID: 346789349}
   signal: {fileID: 720752728}
   foreGround: {fileID: 449006678}
@@ -957,8 +924,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1377681131}
   - component: {fileID: 1377681132}
-  - component: {fileID: 1377681133}
   - component: {fileID: 1377681134}
+  - component: {fileID: 1377681133}
   m_Layer: 0
   m_Name: InputManager
   m_TagString: Untagged
@@ -974,11 +941,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1377681130}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.43973017, y: 15.553736, z: 5.393628}
+  m_LocalPosition: {x: -2.3655014, y: 13.14576, z: -7.2405176}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 913943457}
-  m_RootOrder: 1
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1377681132
 MonoBehaviour:

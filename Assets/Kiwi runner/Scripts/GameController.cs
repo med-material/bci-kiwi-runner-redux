@@ -51,15 +51,10 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && !gameRunning && introDone)
+        if (Input.GetKeyDown(KeyCode.RightShift) && !gameRunning && introDone)
         {
             StartGame();
         }
-
-        //if (Input.GetKeyDown(KeyCode.W))
-        //{
-        //    kiwi.Jump();
-        //}
 
 
         if (timing)
@@ -165,7 +160,7 @@ public class GameController : MonoBehaviour
         else
         {
             babies.SetActive(true);
-            Invoke("StopMoving", 3.5f);
+            Invoke("StopMoving", 3.5f * (baseSpeed / 10));
         }
     }
 
@@ -203,11 +198,14 @@ public class GameController : MonoBehaviour
         switch (other.tag)
         {
             case "Cue":
+                timer = 0;
+                timing = true;
                 Cue();
                 break;
 
             case "TriggerZone":
-                timing = true;
+                timing = false;
+                Debug.Log("input window: " + timer);
                 Task();
                 break;
 
@@ -243,8 +241,6 @@ public class GameController : MonoBehaviour
 
             case "TriggerZone":
                 Signals(signal, false);
-                timing = false;
-                Debug.Log("input window: " + timer);
                 break;
 
             case "Flying":
