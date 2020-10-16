@@ -102,12 +102,12 @@ public class GameController : MonoBehaviour
         }
         else
         {
-            if (decisionData.decision == InputTypes.AcceptAllInput)
+            if (decisionData.decision == TrialType.AccInput)
             {
                 kiwi.Jump();
                 Debug.Log("Input accepted");
             }
-            else if (decisionData.decision == InputTypes.FabInput)
+            else if (decisionData.decision == TrialType.FabInput)
             {
                 kiwi.Jump();
                 Debug.Log("Input rejected - fabricating input");
@@ -152,10 +152,10 @@ public class GameController : MonoBehaviour
         kiwi.Reset();
         kiwi.ResetThoughts();
         
-        if(currentTrial < gameManager.trials)
+        if(gameManager.currentTrial < gameManager.trialsTotal)
         {
             spawner.SpawnRandomObstacle();
-            currentTrial++;
+            //gameManager.currentTrial++;
         }
         else
         {

@@ -139,6 +139,7 @@ GameObject:
   - component: {fileID: 322083993}
   - component: {fileID: 322083991}
   - component: {fileID: 322083992}
+  - component: {fileID: 322083994}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: GameManager
@@ -158,12 +159,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab27ba71bd6f5fa43bf6d4ad3d916c71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  setupType: 0
+  rejTrials: 5
+  accTrials: 10
+  fabTrials: 5
+  trialsTotal: -1
+  currentTrial: 0
   noInputReceivedFabAlarm: 0.5
   fabAlarmVariability: 0.5
-  startPolicyReview: 0.2
-  trials: 2
-  gamePolicy: 2
   interTrialIntervalSeconds: 4.5
   inputWindowSeconds: 4
   prepPhaseSeconds: 2
@@ -197,9 +199,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  onGamePolicyChanged:
-    m_PersistentCalls:
-      m_Calls: []
   onInputWindowChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -232,6 +231,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &322083994
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 322083990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c8d1fb52d8600e42b2ab2b68923171c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &346789349 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7047621263992430101, guid: 04aab625570d0874193e3d00aabdc748, type: 3}
