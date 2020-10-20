@@ -162,10 +162,13 @@ MonoBehaviour:
   rejTrials: 5
   accTrials: 10
   fabTrials: 5
-  trialsTotal: -1
+  assistSuccessTrials: 0
+  assistFailTrials: 0
+  explicitShamTrials: 0
+  trialsTotal: 20
   currentTrial: 0
-  noInputReceivedFabAlarm: 0.5
-  fabAlarmVariability: 0.5
+  noInputReceivedFabAlarm: 2
+  fabAlarmVariability: 1
   interTrialIntervalSeconds: 4.5
   inputWindowSeconds: 4
   prepPhaseSeconds: 2
@@ -1036,7 +1039,9 @@ MonoBehaviour:
   Host: localhost
   Port: 5677
   classificationThreshold: 0.7
+  consecutiveBufferSize: 8
   motorImageryEvent: 
+  bciProcessingMode: 0
   onBCIStateChanged:
     m_PersistentCalls:
       m_Calls: []

@@ -89,11 +89,6 @@ public class GameController : MonoBehaviour
         spawner.SpawnRandomObstacle();
     }
 
-    void OpenInputWindow()
-    {
-        gameManager.OpenInputWindow();
-    }
-
     public void onGameDecision(GameDecisionData decisionData)
     {
         if (!gameRunning)
@@ -128,7 +123,7 @@ public class GameController : MonoBehaviour
     {
         Signals(prep, false);
         Signals(signal, true);
-        OpenInputWindow();
+        gameManager.OpenInputWindow();
     }
 
     void PositiveFeedback()
@@ -198,14 +193,14 @@ public class GameController : MonoBehaviour
         switch (other.tag)
         {
             case "Cue":
-                timer = 0;
-                timing = true;
+                //timer = 0;
+                //timing = true;
                 Cue();
                 break;
 
             case "TriggerZone":
-                timing = false;
-                Debug.Log("input window: " + timer);
+                //timing = false;
+                //Debug.Log("input window: " + timer);
                 Task();
                 break;
 

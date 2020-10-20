@@ -8,15 +8,22 @@ using UnityEngine.Events;
 
 public struct GameData
 {
-    public float fabRate;
-    public float accRate;
-    public float startPolicyReview;
     public int trials;
     public float interTrialIntervalSeconds;
     public float inputWindowSeconds;
     public GameState gameState;
     public float noInputReceivedFabAlarm;
     public float fabAlarmVariability;
+}
+
+public class Mechanism
+{
+    public string name = "";
+    public TrialType trialType;
+    public float rate = -1f;
+    public int trialsLeft = -1;
+    public int trials = -1;
+    public UrnEntryBehavior behavior;
 }
 
 public class InputData
@@ -37,16 +44,14 @@ public enum InputType
 {
     KeySequence,
     MotorImagery,
-    BlinkDetection
+    BlinkDetection,
+    FabInput
 }
 
 public class GameDecisionData
 {
     public TrialType decision;
     public float currentFabAlarm;
-    public float accRate;
-    public float fabRate;
-    public float rejRate;
 }
 
 public struct GameTimers
@@ -74,6 +79,9 @@ public enum TrialType
     AccInput,
     FabInput,
     RejInput,
+    AssistSuccess,
+    AssistFail,
+    ExplicitSham
 }
 
 public class GameManager : MonoBehaviour
@@ -84,18 +92,18 @@ public class GameManager : MonoBehaviour
     public int rejTrials = 5;
     public int accTrials = 10;
     public int fabTrials = 5;
-
-    private float fabRate = -1f;
-    private float accRate = -1f;
-    private float rejRate = -1f;
-    private int rejTrialsLeft = -1;
-    private int accTrialsLeft = -1;
-    private int fabTrialsLeft = -1;
-
+    public int assistSuccessTrials = 0;
+    public int assistFailTrials = 0;
+    public int explicitShamTrials = 0;
+    
+    // made public for kiwi runner
     public int trialsTotal = -1;
     public int currentTrial = -1;
+
     private TrialType trialResult = TrialType.RejInput;
     private TrialType trialGoal = TrialType.RejInput;
+
+    private Dictionary<string, Mechanism> mechanisms = new Dictionary<string, Mechanism>();
 
     [Header("FabInput Settings")]
     [Tooltip("When should the fabrication fire.")]
@@ -105,6 +113,7 @@ public class GameManager : MonoBehaviour
     private float fabAlarmVariability = 0.5f; //added delay variability to make the alarm unpredictable.
     private float currentFabAlarm = 0f;
     private bool alarmFired = false;
+    private int fabInputNumber = 0;
 
 
     [Header("InputWindow Settings")]
@@ -112,8 +121,8 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private float interTrialIntervalSeconds = 4.5f;
     //[SerializeField]
-    public float inputWindowSeconds = 1f;
-    public float prepPhaseSeconds = 1f;
+    public float inputWindowSeconds = 1f; // made public for kiwi runner
+    public float prepPhaseSeconds = 1f; // added for kiwi runner
 
     private float inputWindowTimer = 0.0f;
     private float interTrialTimer = 0.0f;
@@ -144,19 +153,82 @@ public class GameManager : MonoBehaviour
     {
         loggingManager = GameObject.Find("LoggingManager").GetComponent<LoggingManager>();
         urn = GetComponent<UrnModel>();
+        SetupMechanisms();
         SetupUrn();
         LogMeta();
     }
 
+    private void SetupMechanisms()
+    {
+        mechanisms["AccInput"] = new Mechanism
+        {
+            name = "AccInput",
+            trialType = TrialType.AccInput,
+            rate = 0f,
+            trials = accTrials,
+            trialsLeft = accTrials,
+            behavior = UrnEntryBehavior.Persist
+        };
+
+        mechanisms["FabInput"] = new Mechanism
+        {
+            name = "FabInput",
+            trialType = TrialType.FabInput,
+            rate = 0f,
+            trials = fabTrials,
+            trialsLeft = fabTrials,
+            behavior = UrnEntryBehavior.Persist
+        };
+
+        mechanisms["RejInput"] = new Mechanism
+        {
+            name = "RejInput",
+            trialType = TrialType.RejInput,
+            rate = 0f,
+            trials = rejTrials,
+            trialsLeft = rejTrials,
+            behavior = UrnEntryBehavior.Override
+        };
+        mechanisms["AssistSuccess"] = new Mechanism
+        {
+            name = "AssistSuccess",
+            trialType = TrialType.AssistSuccess,
+            rate = 0f,
+            trials = assistSuccessTrials,
+            trialsLeft = assistSuccessTrials,
+            behavior = UrnEntryBehavior.Persist
+        };
+        mechanisms["AssistFail"] = new Mechanism
+        {
+            name = "AssistFail",
+            trialType = TrialType.AssistFail,
+            rate = 0f,
+            trials = assistFailTrials,
+            trialsLeft = assistFailTrials,
+            behavior = UrnEntryBehavior.Persist
+        };
+        mechanisms["ExplicitSham"] = new Mechanism
+        {
+            name = "ExplicitSham",
+            trialType = TrialType.ExplicitSham,
+            rate = 0f,
+            trials = explicitShamTrials,
+            trialsLeft = explicitShamTrials,
+            behavior = UrnEntryBehavior.Persist
+        };
+    }
+
     private void SetupUrn()
     {
-        urn.AddUrnEntryType("FabInput", UrnEntryBehavior.Persist, fabTrials);
-        urn.AddUrnEntryType("AccInput", UrnEntryBehavior.Persist, accTrials);
-        urn.AddUrnEntryType("RejInput", UrnEntryBehavior.Override, rejTrials);
+        trialsTotal = 0;
+        foreach (KeyValuePair<string, Mechanism> pair in mechanisms)
+        {
+            var m = pair.Value;
+            urn.AddUrnEntryType(m.name, m.behavior, m.trials);
+            trialsTotal += m.trials;
+        }
 
         urn.NewUrn();
-
-        trialsTotal = rejTrials + accTrials + fabTrials;
         currentTrial = 0;
     }
 
@@ -178,26 +250,26 @@ public class GameManager : MonoBehaviour
     private void LogEvent(string eventLabel)
     {
         Dictionary<string, object> gameLog = new Dictionary<string, object>() {
-            {"Timestamp", System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffff")},
             {"Event", eventLabel},
             {"InputWindow", System.Enum.GetName(typeof(InputWindowState), inputWindow)},
             {"InputWindowOrder", inputIndex},
             {"InterTrialTimer", interTrialTimer},
             {"InputWindowTimer", inputWindowTimer},
             {"GameState", System.Enum.GetName(typeof(GameState), gameState)},
-            {"CurrentAcceptRate", accRate},
-            {"CurrentFabRate", fabRate},
-            {"CurrentRejectRate", rejRate},
-            {"AccInputTrialsLeft", accTrialsLeft},
-            {"FabInputTrialsLeft", fabTrialsLeft},
-            {"RejInputTrialsLeft", rejTrialsLeft},
             {"CurrentFabAlarm", currentFabAlarm},
         };
 
+        foreach (KeyValuePair<string, Mechanism> pair in mechanisms)
+        {
+            var m = pair.Value;
+            gameLog[m.name + "TrialsLeft"] = m.trialsLeft;
+            gameLog[m.name + "Rate"] = m.rate;
+        }
+
         if (eventLabel == "GameDecision")
         {
+            gameLog["TrialGoal"] = trialGoal;
             gameLog["TrialResult"] = trialResult;
-            gameLog["CurrentDesignGoal"] = trialGoal;
         }
         else
         {
@@ -212,10 +284,10 @@ public class GameManager : MonoBehaviour
     {
         if (gameState == GameState.Running)
         {
-            // Removed for kiwi runner (opens window 'manually', see below)
-            //if (inputWindow == InputWindowState.Closed)
-            //{
-            //    alarmFired = false;
+            // removed for kiwi runner (opens window 'manually')
+            if (inputWindow == InputWindowState.Closed)
+            {
+                alarmFired = false;
             //    interTrialTimer += Time.deltaTime;
             //    if (interTrialTimer > interTrialIntervalSeconds && currentTrial < trialsTotal)
             //    {
@@ -229,17 +301,22 @@ public class GameManager : MonoBehaviour
             //    {
             //        EndGame();
             //    }
-            //}
-            //else 
-            if (inputWindow == InputWindowState.Open)
+            }
+            else if (inputWindow == InputWindowState.Open)
             {
                 //Debug.Log("inputwindow is open");
                 inputWindowTimer += Time.deltaTime;
                 if (inputWindowTimer > currentFabAlarm && alarmFired == false)
                 {
-                    //Debug.Log("inputWindowTimer exceeded currentFabAlarm.");
+                    Debug.Log("inputWindowTimer exceeded currentFabAlarm.");
                     // Fire fabricated input (if scheduled).
-                    MakeInputDecision(null, false);
+                    InputData fabInputData = new InputData
+                    {
+                        validity = InputValidity.Accepted,
+                        type = InputType.FabInput,
+                        inputNumber = fabInputNumber
+                    };
+                    MakeInputDecision(fabInputData, false);
                     alarmFired = true;
                 }
                 else if (inputWindowTimer > inputWindowSeconds)
@@ -256,12 +333,12 @@ public class GameManager : MonoBehaviour
         gameTimers.inputWindowTimer = inputWindowTimer;
         onGameTimeUpdate.Invoke(gameTimers);
     }
-
+    
     // Added for kiwi runner
     public void OpenInputWindow()
     {
         inputWindow = InputWindowState.Open;
-        //setFabAlarmVariability();
+        SetFabAlarmVariability();
         onInputWindowChanged.Invoke(inputWindow);
         LogEvent("InputWindowChange");
     }
@@ -275,9 +352,6 @@ public class GameManager : MonoBehaviour
     public GameData createGameData()
     {
         GameData gameData = new GameData();
-        gameData.fabRate = fabRate;
-        gameData.accRate = accRate;
-        //gameData.startPolicyReview = startPolicyReview;
         gameData.trials = trialsTotal;
         gameData.interTrialIntervalSeconds = interTrialIntervalSeconds;
         gameData.inputWindowSeconds = inputWindowSeconds;
@@ -311,26 +385,32 @@ public class GameManager : MonoBehaviour
         loggingManager.SaveLog("Game");
         loggingManager.SaveLog("Sample");
         loggingManager.SaveLog("Meta");
+        loggingManager.ClearAllLogs();
     }
 
     public void CalculateRecogRate()
     {
         var entriesLeft = urn.GetEntriesLeft();
-        fabTrialsLeft = entriesLeft["FabInput"];
-        accTrialsLeft = entriesLeft["AccInput"];
-        rejTrialsLeft = entriesLeft["RejInput"];
+
+        foreach (KeyValuePair<string, Mechanism> pair in mechanisms)
+        {
+            var m = pair.Value;
+            m.trialsLeft = entriesLeft[m.name];
+        }
 
         var entryResults = urn.GetEntryResults();
 
-        accRate = (float)entryResults["AccInput"] / (float)trialsTotal;
-        fabRate = (float)entryResults["FabInput"] / (float)trialsTotal;
-        rejRate = (float)entryResults["RejInput"] / (float)trialsTotal;
+        foreach (KeyValuePair<string, Mechanism> pair in mechanisms)
+        {
+            var m = pair.Value;
+            m.rate = (float)entryResults[m.name] / (float)trialsTotal;
+        }
+
         currentTrial = urn.GetIndex();
     }
 
     public void OnInputReceived(InputData inputData)
     {
-        Debug.Log("input Data received");
         if (inputWindow == InputWindowState.Closed)
         {
             // ignore the input.
@@ -351,7 +431,8 @@ public class GameManager : MonoBehaviour
         onInputWindowChanged.Invoke(inputWindow);
         LogEvent("InputWindowChange");
 
-        if(gameState == GameState.Intro)
+        // added for kiwi runner
+        if (gameState == GameState.Intro)
         {
             gameState = GameState.Running;
         }
@@ -361,12 +442,10 @@ public class GameManager : MonoBehaviour
             urn.SetEntryResult(System.Enum.GetName(typeof(TrialType), trialResult));
         }
 
+
         CalculateRecogRate();
         // Send Decision Data
         GameDecisionData gameDecisionData = new GameDecisionData();
-        gameDecisionData.accRate = accRate;
-        gameDecisionData.fabRate = fabRate;
-        gameDecisionData.rejRate = rejRate;
         gameDecisionData.currentFabAlarm = currentFabAlarm;
         gameDecisionData.decision = trialResult;
         gameDecision.Invoke(gameDecisionData);
@@ -380,42 +459,72 @@ public class GameManager : MonoBehaviour
 
     public void MakeInputDecision(InputData inputData = null, bool windowExpired = false)
     {
-        string entry = urn.ReadEntry();
-        trialGoal = (TrialType)System.Enum.Parse(typeof(TrialType), entry);
+        if(gameState != GameState.Intro) // added for kiwi runner
+        {
+            string entry = urn.ReadEntry();
+            trialGoal = (TrialType)System.Enum.Parse(typeof(TrialType), entry);
+            trialResult = TrialType.RejInput;
+        }
+
         if (inputData != null)
         {
-            if (trialGoal == TrialType.AccInput)
+            if(gameState == GameState.Intro) // added for kiwi runner
+            {
+                trialResult = TrialType.AccInput;
+                CloseInputWindow();
+            }
+            else if (inputData.type == InputType.FabInput)
+            {
+                if (trialGoal == TrialType.FabInput)
+                {
+                    trialResult = TrialType.FabInput;
+                    CloseInputWindow();
+                }
+                else if (trialGoal == TrialType.ExplicitSham)
+                {
+                    trialResult = TrialType.ExplicitSham;
+                    CloseInputWindow();
+                }
+            }
+            else if (trialGoal == TrialType.AccInput)
             {
                 if (inputData.validity == InputValidity.Accepted)
                 {
                     trialResult = TrialType.AccInput;
+                    CloseInputWindow();
                 }
                 else
                 {
                     trialResult = TrialType.RejInput;
                 }
-                CloseInputWindow();
             }
             else if (trialGoal == TrialType.RejInput)
             {
                 trialResult = TrialType.RejInput;
                 // ignore the input.
             }
+            else if (trialGoal == TrialType.AssistSuccess)
+            {
+                if (inputData.validity == InputValidity.Accepted)
+                {
+                    trialResult = TrialType.AssistSuccess;
+                    CloseInputWindow();
+                }
+                else
+                {
+                    trialResult = TrialType.RejInput;
+                }
+            }
+            else if (trialGoal == TrialType.AssistFail)
+            {
+                trialResult = TrialType.AssistFail;
+                // ignore the input.
+            }
         }
-        else
+        else if (windowExpired)
         {
-            if (trialGoal == TrialType.FabInput)
-            {
-                trialResult = TrialType.FabInput;
-                CloseInputWindow();
-            }
-            else if (windowExpired)
-            {
-                trialResult = TrialType.RejInput;
-                CloseInputWindow();
-            }
+            CloseInputWindow();
         }
-        Debug.Log(trialResult);
     }
 
     public void PauseTrial()
