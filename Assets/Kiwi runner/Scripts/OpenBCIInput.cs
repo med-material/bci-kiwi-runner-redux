@@ -133,6 +133,7 @@ public class OpenBCIInput : MonoBehaviour
         LogMeta();
         onBCIStateChanged.Invoke(Enum.GetName(typeof(BCIState), bciState), "");
         StartCoroutine("ConnectToBCI");
+        inputNumber = 0;
     }
 
     private void LogMeta()
@@ -151,6 +152,7 @@ public class OpenBCIInput : MonoBehaviour
             {"Event", Enum.GetName(typeof(MotorImageryEvent), miEvent)},
             {"BCIConfidence", lastConfidence},
             {"BCIState", Enum.GetName(typeof(BCIState), bciState)},
+            {"InputNumber", inputNumber},
         };
         loggingManager.Log("Game", gameLog);
         string buffer = "(";
@@ -193,7 +195,6 @@ public class OpenBCIInput : MonoBehaviour
         confidence = ((float)ReadSocket());
         if (confidence == -1f)
         {
-            LogSample("NoData");
             // No Stream available.
             return;
         }
@@ -213,13 +214,13 @@ public class OpenBCIInput : MonoBehaviour
         {
             newClassification = ProcessConsecutiveThreshold(confidence);
         }
-        if (newClassification == MotorImageryEvent.MotorImagery)
-        {
-            inputData.validity = InputValidity.Accepted;
-        }
         if (newClassification != classification)
         {
-            inputNumber++;
+            if (newClassification == MotorImageryEvent.MotorImagery)
+            {
+                inputData.validity = InputValidity.Accepted;
+                inputNumber++;
+            }
             inputData.inputNumber = inputNumber;
             LogMotorImageryEvent(newClassification, confidence);
             onBCIMotorImagery.Invoke(newClassification);
@@ -461,6 +462,7 @@ public class OpenBCIInput : MonoBehaviour
         bciState = BCIState.Disconnected;
         LogStateEvent();
         onBCIStateChanged.Invoke(Enum.GetName(typeof(BCIState), bciState), "");
+        inputNumber = 0;
     }
     void OnApplicationQuit()
     {
