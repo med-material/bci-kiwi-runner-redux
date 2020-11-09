@@ -51,7 +51,7 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.RightShift) && !gameRunning && introDone)
+        if (Input.GetKeyDown(KeyCode.Space) && !gameRunning && introDone)
         {
             StartGame();
         }
@@ -75,7 +75,7 @@ public class GameController : MonoBehaviour
         introDone = true;
         
         gameManager.RunGame();
-        gameManager.OpenInputWindow();
+        //gameManager.OpenInputWindow();
     }
 
     void StartGame()

@@ -50,8 +50,8 @@ public class BlinkDetector : MonoBehaviour
             //Debug.Log(TobiiAPI.GetGazePoint().IsRecent(0.1f));
             //Debug.Log("eyestate: " + Enum.GetName(typeof(EyeState), eyeState));
 
-            //if (Input.GetKeyUp(KeyCode.Space)) // for debugging without eyetracker
-            if (TobiiAPI.GetGazePoint().IsRecent(0.1f))
+            if (Input.GetKeyUp(KeyCode.LeftShift)) // for debugging without eyetracker
+                //if (TobiiAPI.GetGazePoint().IsRecent(0.1f))
             {
                 if (eyeState == EyeState.EyesClosed || eyeState == EyeState.Unintialized)
                 {
@@ -67,8 +67,8 @@ public class BlinkDetector : MonoBehaviour
                 }
                 duration = 0f;
             }
-            //else if (Input.GetKeyDown(KeyCode.Space)) // for debugging without eyetracker
-            else
+            else if (Input.GetKeyDown(KeyCode.LeftShift)) // for debugging without eyetracker
+            //else
             {
                 if (eyeState == EyeState.EyesOpen || eyeState == EyeState.Unintialized)
                 {
@@ -102,7 +102,7 @@ public class BlinkDetector : MonoBehaviour
     // Added for kiwi-runner to start blink detection
     public void onGameStateChanged(GameData gameData)
     {
-        if (gameData.gameState == GameState.Intro)
+        if (gameData.gameState == GameState.Running)
         {
             state = DetectorState.Started;
         }

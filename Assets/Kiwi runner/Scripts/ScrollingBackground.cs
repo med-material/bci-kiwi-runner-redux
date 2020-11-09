@@ -29,6 +29,7 @@ public class ScrollingBackground : MonoBehaviour
     public void StartScrolling()
     {
         StartCoroutine(Scroll());
+        scrolling = true;
     }
 
     IEnumerator Scroll()

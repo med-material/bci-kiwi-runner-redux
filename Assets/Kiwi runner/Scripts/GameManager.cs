@@ -71,7 +71,7 @@ public enum GameState
     Running,
     Paused,
     Stopped,
-    Intro, // added for kiwi runner
+    //Intro, // added for kiwi runner
 }
 
 public enum TrialType
@@ -364,8 +364,8 @@ public class GameManager : MonoBehaviour
     public void RunGame()
     {
         CalculateRecogRate();
-        //gameState = GameState.Running;
-        gameState = GameState.Intro; // added for kiwi runner
+        gameState = GameState.Running;
+        //gameState = GameState.Intro; // added for kiwi runner
         GameData gameData = createGameData();
         onGameStateChanged.Invoke(gameData);
         LogEvent("GameRunning");
@@ -431,16 +431,16 @@ public class GameManager : MonoBehaviour
         onInputWindowChanged.Invoke(inputWindow);
         LogEvent("InputWindowChange");
 
-        // added for kiwi runner
-        if (gameState == GameState.Intro)
-        {
-            gameState = GameState.Running;
-        }
-        else
-        {
+        //// added for kiwi runner
+        //if (gameState == GameState.Intro)
+        //{
+        //    gameState = GameState.Running;
+        //}
+        //else
+        //{
             // store the input decision.
             urn.SetEntryResult(System.Enum.GetName(typeof(TrialType), trialResult));
-        }
+        //}
 
 
         CalculateRecogRate();
@@ -459,21 +459,22 @@ public class GameManager : MonoBehaviour
 
     public void MakeInputDecision(InputData inputData = null, bool windowExpired = false)
     {
-        if(gameState != GameState.Intro) // added for kiwi runner
-        {
+        //if(gameState != GameState.Intro) // added for kiwi runner
+        //{
             string entry = urn.ReadEntry();
             trialGoal = (TrialType)System.Enum.Parse(typeof(TrialType), entry);
             trialResult = TrialType.RejInput;
-        }
+        //}
 
         if (inputData != null)
         {
-            if(gameState == GameState.Intro) // added for kiwi runner
-            {
-                trialResult = TrialType.AccInput;
-                CloseInputWindow();
-            }
-            else if (inputData.type == InputType.FabInput)
+            //if(gameState == GameState.Intro) // added for kiwi runner
+            //{
+            //    trialResult = TrialType.AccInput;
+            //    CloseInputWindow();
+            //}
+            //else 
+            if (inputData.type == InputType.FabInput)
             {
                 if (trialGoal == TrialType.FabInput)
                 {
