@@ -16,6 +16,7 @@ public class GameController : MonoBehaviour
     public static float groundSize;
 
 
+    public GameObject startSignal;
     public GameObject prep;
     public GameObject signal;
     public Transform foreGround;
@@ -71,7 +72,7 @@ public class GameController : MonoBehaviour
 
     void EndIntro()
     {
-        Signals(signal, true);
+        Signals(startSignal, true);
         introDone = true;
         
         gameManager.RunGame();
@@ -81,7 +82,7 @@ public class GameController : MonoBehaviour
     void StartGame()
     {
         gameRunning = true;
-        Signals(signal, false);
+        Signals(startSignal, false);
         PlaySoundEffect(0);
         kiwi.ResetThoughts();
         kiwi.Run();
