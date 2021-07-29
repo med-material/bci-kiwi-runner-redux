@@ -236,19 +236,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab27ba71bd6f5fa43bf6d4ad3d916c71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameSpeed: 10
+  actualSpeed: 0
+  trampolineColor: 0
   rejTrials: 5
   accTrials: 10
   fabTrials: 5
-  assistSuccessTrials: 0
-  assistFailTrials: 0
-  explicitShamTrials: 0
   trialsTotal: 20
   currentTrial: 0
   noInputReceivedFabAlarm: 2
   fabAlarmVariability: 1
-  interTrialIntervalSeconds: 4.5
-  inputWindowSeconds: 4
   prepPhaseSeconds: 2
+  inputWindowSeconds: 4
+  interTrialTimer: 0
   onGameStateChanged:
     m_PersistentCalls:
       m_Calls:
@@ -282,9 +282,6 @@ MonoBehaviour:
   onInputWindowChanged:
     m_PersistentCalls:
       m_Calls: []
-  onGameTimeUpdate:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &322083992
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -309,7 +306,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &322083994
 MonoBehaviour:
@@ -481,11 +478,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3236453737815359840, guid: 170c7341538d7004dbaeb7684c084612, type: 3}
       propertyPath: m_Offset.x
-      value: 0
+      value: 0.97931063
       objectReference: {fileID: 0}
     - target: {fileID: 3236453737815359840, guid: 170c7341538d7004dbaeb7684c084612, type: 3}
       propertyPath: m_Size.x
-      value: 1.7045838
+      value: 3.6632054
       objectReference: {fileID: 0}
     - target: {fileID: 3236453737815359840, guid: 170c7341538d7004dbaeb7684c084612, type: 3}
       propertyPath: m_IsTrigger
@@ -579,7 +576,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &458582877
 MonoBehaviour:
@@ -748,15 +745,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f951bcd44d8e603428baacea5ae95984, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 322083991}
-  baseSpeed: 13
   startSignal: {fileID: 1641532974}
   prep: {fileID: 346789349}
   signal: {fileID: 720752728}
   foreGround: {fileID: 449006678}
+  gameManager: {fileID: 322083991}
   kiwi: {fileID: 1609544036}
   eagle: {fileID: 821167502}
   babies: {fileID: 526103277}
+  trampolineSprites:
+  - {fileID: 21300000, guid: 22d95410f82540346a0abc4f54e2f292, type: 3}
+  - {fileID: 21300000, guid: 2c4354ddf70874045b85d95a0f845461, type: 3}
+  - {fileID: 21300000, guid: da8f185aadea51a458963d4ef51c1c85, type: 3}
+  - {fileID: 21300000, guid: 6d885b2aa5e9d244aa2af87a81f0a25e, type: 3}
 --- !u!4 &1006927846
 Transform:
   m_ObjectHideFlags: 0
@@ -1038,7 +1039,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1377681132
 MonoBehaviour:
@@ -1523,6 +1524,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4680969992073316919, guid: fb7f5f7388f0f8345a3590da3165037c, type: 3}
+      propertyPath: m_Name
+      value: EagleThought
+      objectReference: {fileID: 0}
     - target: {fileID: 4826168960492815560, guid: fb7f5f7388f0f8345a3590da3165037c, type: 3}
       propertyPath: m_LocalPosition.x
       value: -7.1
@@ -1610,6 +1615,10 @@ PrefabInstance:
     - target: {fileID: 6250024885452375783, guid: fb7f5f7388f0f8345a3590da3165037c, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6250024885452375783, guid: fb7f5f7388f0f8345a3590da3165037c, type: 3}
+      propertyPath: m_Name
+      value: HeartThought
       objectReference: {fileID: 0}
     - target: {fileID: 8065691936282470457, guid: fb7f5f7388f0f8345a3590da3165037c, type: 3}
       propertyPath: m_Enabled

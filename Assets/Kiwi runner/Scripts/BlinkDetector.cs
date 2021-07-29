@@ -50,8 +50,8 @@ public class BlinkDetector : MonoBehaviour
             //Debug.Log(TobiiAPI.GetGazePoint().IsRecent(0.1f));
             //Debug.Log("eyestate: " + Enum.GetName(typeof(EyeState), eyeState));
 
-            if (Input.GetKeyUp(KeyCode.LeftShift)) // for debugging without eyetracker
-                //if (TobiiAPI.GetGazePoint().IsRecent(0.1f))
+            //if (Input.GetKeyUp(KeyCode.LeftShift)) // for debugging without eyetracker
+            if (TobiiAPI.GetGazePoint().IsRecent(0.1f))
             {
                 if (eyeState == EyeState.EyesClosed || eyeState == EyeState.Unintialized)
                 {
@@ -67,17 +67,16 @@ public class BlinkDetector : MonoBehaviour
                 }
                 duration = 0f;
             }
-            else if (Input.GetKeyDown(KeyCode.LeftShift)) // for debugging without eyetracker
-            //else
-            {
-                if (eyeState == EyeState.EyesOpen || eyeState == EyeState.Unintialized)
-                {
-                    eyeState = EyeState.EyesClosed;
-                    timestamp = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffff");
-                    LogEyeClose();
-                }
-                duration += Time.deltaTime;
-            }
+            //else if (Input.GetKeyDown(KeyCode.LeftShift)) // for debugging without eyetracker
+            //{
+            //    if (eyeState == EyeState.EyesOpen || eyeState == EyeState.Unintialized)
+            //    {
+            //        eyeState = EyeState.EyesClosed;
+            //        timestamp = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffff");
+            //        LogEyeClose();
+            //    }
+            //    duration += Time.deltaTime;
+            //}
         }
     }
 
