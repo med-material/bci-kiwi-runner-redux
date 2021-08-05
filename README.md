@@ -42,4 +42,5 @@ When the game ends (or OnApplicationQuit), the game saves two logs in the /docum
 *	No. of trials left + rate of acc/rej/fab input
 *	Trial result
 *	Trial goal
+
 For more information about the LoggingManager, see: https://github.com/med-material/LoggingManager.
