@@ -6,15 +6,13 @@ using Tobii.Gaming;
 using System;
 using System.IO;
 
-public enum EyeState
-{
+public enum EyeState {
     EyesOpen,
     EyesClosed,
     Unintialized
 }
 
-public enum DetectorState
-{
+public enum DetectorState {
     Started,
     Stopped
 }
@@ -37,24 +35,20 @@ public class BlinkDetector : MonoBehaviour
 
     private LoggingManager loggingManager;
 
-    void Start()
-    {
+    void Start() {
         loggingManager = GameObject.Find("LoggingManager").GetComponent<LoggingManager>();
+        StartBlinkDetection();
     }
 
     void Update()
     {
-        if (state == DetectorState.Started)
-        {
+        if (state == DetectorState.Started) {
             // If eyes are OPEN
-            //Debug.Log(TobiiAPI.GetGazePoint().IsRecent(0.1f));
-            //Debug.Log("eyestate: " + Enum.GetName(typeof(EyeState), eyeState));
-
-            //if (Input.GetKeyUp(KeyCode.LeftShift)) // for debugging without eyetracker
+            Debug.Log(TobiiAPI.GetGazePoint().IsRecent(0.1f));
+            Debug.Log("eyestate: " + Enum.GetName(typeof(EyeState), eyeState));
             if (TobiiAPI.GetGazePoint().IsRecent(0.1f))
             {
-                if (eyeState == EyeState.EyesClosed || eyeState == EyeState.Unintialized)
-                {
+                if (eyeState == EyeState.EyesClosed || eyeState == EyeState.Unintialized) {
                     eyeState = EyeState.EyesOpen;
                     LogEyeOpen();
                     blinkNo++;
@@ -66,22 +60,19 @@ public class BlinkDetector : MonoBehaviour
                     onBlink.Invoke(inputData);
                 }
                 duration = 0f;
+            } else
+            {
+                if (eyeState == EyeState.EyesOpen || eyeState == EyeState.Unintialized) {
+                    eyeState = EyeState.EyesClosed;
+                    timestamp = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffff");
+                    LogEyeClose();
+                }
+                duration += Time.deltaTime;
             }
-            //else if (Input.GetKeyDown(KeyCode.LeftShift)) // for debugging without eyetracker
-            //{
-            //    if (eyeState == EyeState.EyesOpen || eyeState == EyeState.Unintialized)
-            //    {
-            //        eyeState = EyeState.EyesClosed;
-            //        timestamp = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffff");
-            //        LogEyeClose();
-            //    }
-            //    duration += Time.deltaTime;
-            //}
         }
     }
 
-    private void LogEyeOpen()
-    {
+    private void LogEyeOpen() {
         loggingManager.Log("BlinkLog", "Event", "EyeOpening");
         loggingManager.Log("BlinkLog", "BlinkNo", blinkNo);
         loggingManager.Log("BlinkLog", "DurationClosed_s", duration);
@@ -89,8 +80,7 @@ public class BlinkDetector : MonoBehaviour
         loggingManager.ClearLog("BlinkLog");
     }
 
-    private void LogEyeClose()
-    {
+    private void LogEyeClose() {
         //loggingManager.Log("BlinkLog", "TimestampEye", timestamp);
         loggingManager.Log("BlinkLog", "Event", "EyeClosing");
         loggingManager.Log("BlinkLog", "BlinkNo", blinkNo);
@@ -99,26 +89,11 @@ public class BlinkDetector : MonoBehaviour
         loggingManager.ClearLog("BlinkLog");
     }
 
-    // Added for kiwi-runner to start blink detection
-    public void onGameStateChanged(GameData gameData)
-    {
-        if (gameData.gameState == GameState.Running)
-        {
-            state = DetectorState.Started;
-        }
-        else if (gameData.gameState == GameState.Stopped)
-        {
-            state = DetectorState.Stopped;
-        }
-    }
-
-    public void StartBlinkDetection()
-    {
+    public void StartBlinkDetection() {
         state = DetectorState.Started;
     }
 
-    public void StopBlinkDetection()
-    {
+    public void StopBlinkDetection() {
         state = DetectorState.Stopped;
     }
 }
